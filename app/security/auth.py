@@ -43,7 +43,7 @@ def allowed_roles(arg_name: str, roles: set[UserRole]):
             temp.intersection_update(user_card.roles)
 
             if not len(temp):
-                raise HTTPException(403, "Forbidden error")
+                raise HTTPException(401, "Unauthorized error")
 
             return await func(*args, **kwargs)
         return wrapper
