@@ -4,7 +4,7 @@ from uuid import UUID
 import asyncpg
 from fastapi import HTTPException
 from app.repositories._base import BasePostgresRepository
-from app.schemas.users.user import UserCard
+from app.schemas.users.user import UserCard, UserRegisterModel
 from app.schemas.users.user_token import UserAuthToken
 
 
@@ -53,3 +53,29 @@ class UserAuthRepository(BasePostgresRepository):
         """, user_id)
 
         return UserCard.parse_obj(user) if user else None
+
+    async def create_new_card(self, user: UserCard):
+        try:
+            await self._postgresql.execute(f"""
+                INSERT INTO {self.USER_CARD_TABLE} VALUES ($1, $2, $3, $4, $5, $6)
+            """, user.user_id, user.roles, user.user_name, user.email, user.photo, user.created_at)
+        except asyncpg.exceptions.UniqueViolationError:
+            raise HTTPException(422, 'User is exist')
+
+    async def register_new_user(self, user: UserRegisterModel) -> UserAuthToken:
+        async with self._postgresql.transaction():
+            user: UserCard = user.get_user_card_model()
+            await self.create_new_card(user)
+            return await self.create_new_tokens(user.user_id)
+
+    async def refresh_tokens(self, token: str) -> UserAuthToken:
+        user_id: dict = await self._postgresql.fetchrow(
+            f"""
+            SELECT user_id FROM {self.USER_AUTH_TABLE}
+            WHERE refresh_token = $1 AND refresh_token_expires > NOW()
+            """, token)
+
+        if not user_id:
+            raise HTTPException(403, 'Forbidden error')
+
+        return await self.create_new_tokens(user_id.get('user_id'))
