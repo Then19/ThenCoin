@@ -32,14 +32,13 @@ def upgrade():
             user_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
             roles users.user_role[] NOT NULL DEFAULT '{USER}',
 
-            user_name VARCHAR(16) NOT NULL,
+            user_name VARCHAR(32) NULL,
             
             email VARCHAR(64) NULL,
             
             photo UUID NULL,
 
-            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-            CONSTRAINT user_name_unique UNIQUE (user_name)
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         )
         """)
 

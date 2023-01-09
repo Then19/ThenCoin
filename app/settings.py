@@ -14,7 +14,7 @@ class Settings(BaseSettings):
 
     access_token_lifetime = 24 * 60 * 60
 
-    refresh_token_lifetime = 10 * 24 * 60 * 60
+    refresh_token_lifetime = 30 * 24 * 60 * 60
 
 
 settings = Settings()
