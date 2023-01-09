@@ -11,7 +11,7 @@ class UserCard(BaseModel):
     user_id: UUID
     roles: conset(item_type=UserRole)
 
-    user_name: constr(min_length=4, max_length=16)
+    user_name: Optional[constr(max_length=32)]
     email: Optional[constr(max_length=64, regex='%@%')]
     photo: Optional[UUID]
 
@@ -19,7 +19,7 @@ class UserCard(BaseModel):
 
 
 class UserRegisterModel(BaseModel):
-    user_name: constr(min_length=4, max_length=16)
+    user_name: Optional[constr(max_length=32)]
 
     email: Optional[constr(max_length=64, regex='%@%')]
 

@@ -31,8 +31,6 @@ def upgrade():
         )
     """)
 
-    conn.execute()
-
 
 def downgrade():
     conn = op.get_bind()
