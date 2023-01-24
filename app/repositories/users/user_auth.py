@@ -10,6 +10,7 @@ from app.schemas.users.user_token import UserAuthToken
 
 class UserAuthRepository(BasePostgresRepository):
     _postgresql: asyncpg.Connection
+    Transaction = BasePostgresRepository.transaction
 
     USER_CARD_TABLE = "users.user_card"
     USER_AUTH_TABLE = "users.user_auth_token"
@@ -61,12 +62,6 @@ class UserAuthRepository(BasePostgresRepository):
             """, user.user_id, user.roles, user.user_name, user.email, user.photo, user.created_at)
         except asyncpg.exceptions.UniqueViolationError:
             raise HTTPException(422, 'User is exist')
-
-    async def register_new_user(self, user: UserRegisterModel) -> UserAuthToken:
-        async with self._postgresql.transaction():
-            user: UserCard = user.get_user_card_model()
-            await self.create_new_card(user)
-            return await self.create_new_tokens(user.user_id)
 
     async def refresh_tokens(self, token: str) -> UserAuthToken:
         user_id: dict = await self._postgresql.fetchrow(

@@ -5,6 +5,7 @@ from fastapi import APIRouter, Query, Depends
 from app.repositories.users import UserAuthRepository, get_auth_repository
 from app.schemas.users.user import UserRegisterModel
 from app.schemas.users.user_token import UserAuthToken
+from app.service import UserService, get_user_service
 
 router = APIRouter(prefix='/auth')
 
@@ -33,6 +34,6 @@ async def generate_refresh_token(
 async def register_new_user(
         data: UserRegisterModel,
 
-        auth_repository: UserAuthRepository = Depends(get_auth_repository)
+        user_service: UserService = Depends(get_user_service)
 ) -> UserAuthToken:
-    return await auth_repository.register_new_user(data)
+    return await user_service.register_new_user(data)

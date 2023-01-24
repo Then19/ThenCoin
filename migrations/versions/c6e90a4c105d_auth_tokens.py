@@ -34,4 +34,4 @@ def upgrade():
 
 def downgrade():
     conn = op.get_bind()
-    conn.execute(""" DROP TABLE users.user_auth_token """)
+    conn.execute(""" DROP TABLE IF EXISTS users.user_auth_token """)
