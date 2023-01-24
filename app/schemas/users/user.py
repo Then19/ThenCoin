@@ -23,9 +23,7 @@ class UserRegisterModel(BaseModel):
 
     email: Optional[constr(max_length=64, regex='%@%')]
 
-    password: constr(min_length=8, max_length=256, regex="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$")
-
-    def get_user_card_model(self):
+    def create_user_card_model(self):
         return UserCard(
             user_id=uuid4(),
             roles={UserRole.USER},

@@ -22,7 +22,7 @@ async def get_user_by_token(
             user = await repo.get_user_by_token(token)
 
     if not user:
-        raise HTTPException(403, detail="Forbidden error")
+        raise HTTPException(401, detail="Unauthorized error")
 
     return user
 
@@ -43,7 +43,7 @@ def allowed_roles(arg_name: str, roles: set[UserRole]):
             temp.intersection_update(user_card.roles)
 
             if not len(temp):
-                raise HTTPException(401, "Unauthorized error")
+                raise HTTPException(403, detail="Forbidden error")
 
             return await func(*args, **kwargs)
         return wrapper
